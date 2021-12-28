@@ -1,29 +1,64 @@
+# https://programmers.co.kr/learn/courses/30/lessons/64061?language=python3
+
 from test import check_test_case
 
 
-def exchange_xy(board):
-    board_length = len(board)
-    new_board = []
+def pop_doll(board, position):
+    depth_length = len(board)
 
-    for i in range(board_length):
-        new_board.append([])
+    for depth in range(depth_length):
+        picked = board[depth][position]
 
-    for column in board:
-        for index in range(len(column)):
-            new_board[index].append(column[index])
+        if picked != 0:
+            board[depth][position] = 0
+            return board, picked
 
-    return new_board
+    return board, None
+
+
+def calc_deleted_doll(basket):
+    delete_count = 0
+    index = 0
+
+    if len(basket) == 0:
+        return 0
+
+    while True:
+        if len(basket) == 0:
+            break
+
+        if index == len(basket) - 1:
+            break
+
+        if basket[index] == basket[index + 1]:
+            del basket[index + 1], basket[index]
+            delete_count += 2
+            index = 0
+            continue
+
+        index += 1
+
+    return delete_count
 
 
 def solution(board, moves):
-    new_board = exchange_xy(board)
+    basket = []
 
     for position in moves:
-        print(new_board[position-1])
+        new_board, picked = pop_doll(board, position - 1)
 
-    answer = 0
+        board = new_board
+
+        if picked != None:
+            basket.append(picked)
+
+    answer = calc_deleted_doll(basket)
     return answer
 
 
 check_test_case(solution([[0, 0, 0, 0, 0], [0, 0, 1, 0, 3], [0, 2, 5, 0, 1], [
     4, 2, 4, 4, 2], [3, 5, 1, 3, 1]], [1, 5, 3, 5, 1, 2, 1, 4]), 4)
+check_test_case(solution([[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [
+                0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], [1, 5, 3, 5, 1, 2, 1, 4]), 0)
+check_test_case(solution([[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 3, 0, 0, 0], [
+    0, 0, 0, 0, 0], [0, 0, 0, 0, 3]], [1, 5, 3, 5, 1, 2, 1, 4]), 2)
