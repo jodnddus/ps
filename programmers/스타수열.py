@@ -1,4 +1,6 @@
 # https://programmers.co.kr/learn/courses/30/lessons/70130
+# https://yabmoons.tistory.com/610
+
 from test import check_test_case
 from collections import Counter
 
