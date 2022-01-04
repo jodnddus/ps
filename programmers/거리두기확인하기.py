@@ -1,42 +1,53 @@
 # https://programmers.co.kr/learn/courses/30/lessons/81302
+# https://velog.io/@sem/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4-LEVEL2-%EA%B1%B0%EB%A6%AC%EB%91%90%EA%B8%B0-%ED%99%95%EC%9D%B8%ED%95%98%EA%B8%B0-Python
+# bfs
 from test import check_test_case
-from itertools import combinations
+from collections import deque
 
 
-def listed(place):
-    new_place = []
-    p_info = []
+def bfs(place):
+    p_nodes = []
 
-    for row_index, row in enumerate(place):
-        listed_row = list(row)
+    dx = [-1, 1, 0, 0]
+    dy = [0, 0, -1, 1]
 
-        for item_index, item in enumerate(listed_row):
-            if item == 'P':
-                p_info.append([row_index, item_index])
+    for y in range(5):
+        for x in range(5):
+            if place[y][x] == "P":
+                p_nodes.append([y, x])
 
-        new_place.append(listed_row)
+    for p in p_nodes:
+        visited = [[0] * 5 for _ in range(5)]
+        distance = [[0] * 5 for _ in range(5)]
+        q = deque([p])
 
-    return new_place, p_info
+        visited[p[0]][p[1]] = 1
 
+        while q:
+            y, x = q.popleft()
 
-def get_manhattan_distance(node1, node2):
-    x_node1, y_node1 = node1
-    x_node2, y_node2 = node2
+            for i in range(4):
+                new_x = x + dx[i]
+                new_y = y + dy[i]
 
-    return abs(x_node1 - x_node2) + abs((y_node1 - y_node2))
+                if 0 <= new_x < 5 and 0 <= new_y < 5 and not visited[new_y][new_x]:
+                    visited[new_y][new_x] = 1
 
+                    if place[new_y][new_x] == "O":
+                        q.append([new_y, new_x])
+                        visited[new_y][new_x] = 1
+                        distance[new_y][new_x] = distance[y][x] + 1
 
-def check_keep_distance(place, p_info):
-    print(list(filter(lambda nodes: get_manhattan_distance(
-        nodes[0], nodes[1]) <= 2, list(combinations(p_info, 2)))))
+                    if place[new_y][new_x] == 'P' and distance[y][x] <= 1:
+                        return 0
+    return 1
 
 
 def solution(places):
     answer = []
 
     for place in places:
-        place, p_info = listed(place)
-        answer.append(check_keep_distance(place, p_info))
+        answer.append(bfs(place))
 
     return answer
 
